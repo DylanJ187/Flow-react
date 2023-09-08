@@ -1,0 +1,90 @@
+.table-wrapper {
+  width: 100%;
+}
+
+.table {
+  display: block;
+  overflow: hidden;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-radius: 10px;
+  white-space: nowrap;
+  width: 100em;
+  max-width: 80%;
+  margin: auto;
+  table-layout: auto;
+  overflow-x: auto;
+}
+
+.table thead {
+  color: #222;
+}
+
+.table th,
+.table td {
+  padding: 0.8rem;
+}
+
+.table td {
+  border-top: 0.5px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#subject {
+  width: 112.46px;
+  text-align: center;
+}
+.expand {
+  width: 100%;
+  text-align: left;
+}
+#description {
+  width: 616.8px;
+  text-align: left;
+}
+#status {
+  width: 125.59px;
+  text-align: center;
+}
+#actions {
+  width: 66.73px;
+  text-align: center;
+}
+
+.label {
+  border-radius: 3px;
+  padding: 0.3rem;
+  color: white;
+  width: 100px;
+  display: inline-block; /* Needed so the width is applied correctly */
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.label-in-Progress {
+  background-color: #ffbd4c;
+}
+
+.label-completed {
+  background-color: #42a942;
+}
+
+.label-overdue {
+  background-color: #d9534f;
+}
+
+.label-not-Started {
+  background-color: #777;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.actions svg {
+  cursor: pointer;
+}

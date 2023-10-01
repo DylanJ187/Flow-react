@@ -172,6 +172,7 @@ const Notes = () => {
           <input
             value={editedTitle}
             maxLength={15}
+            placeholder="max of 15 characters"
             onChange={(e) => {
               e.stopPropagation();
               setEditedTitle(e.target.value);

@@ -168,13 +168,6 @@ IMAGE AND NAME ON SIDEBAR (PRETTY USELESS FOR OUR APP, NEED MORE SPACE FOR SUB N
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
-              title="Profile"
-              to="/profile"
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
           </Box>
         </Menu>
       </ProSidebar>

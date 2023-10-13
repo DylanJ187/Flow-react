@@ -88,33 +88,6 @@ const Sidebar = () => {
               </Box>
             )}
           </MenuItem>
-          {/*
-IMAGE AND NAME ON SIDEBAR (PRETTY USELESS FOR OUR APP, NEED MORE SPACE FOR SUB NOTES)
-
-{!isCollapsed && (
-            <Box mb="25px">
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
-                  src={`../../assets/user.png`}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
-              </Box>
-              <Box textAlign="center">
-                <Typography
-                  variant="h3"
-                  color={colors.grey[100]}
-                  fontWeight="bold"
-                  sx={{ margin: "10px 0" }}
-                >
-                  Dylan Jupp
-                </Typography>
-              </Box>
-            </Box>
-          )}
-   */}
           <Box paddingLeft={isCollapsed ? undefined : "2%"}>
             <Item
               title="Dashboard"
@@ -165,13 +138,6 @@ IMAGE AND NAME ON SIDEBAR (PRETTY USELESS FOR OUR APP, NEED MORE SPACE FOR SUB N
               title="Settings"
               to="/settings"
               icon={<SettingsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Profile"
-              to="/profile"
-              icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

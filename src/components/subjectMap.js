@@ -26,8 +26,8 @@ export const subjectMap = {
   //group 3
   "history-sl": "History SL",
   "history-hl": "History HL",
-  "business-management-sl": "Business Management SL",
-  "business-management-hl": "Business Management HL",
+  "business-management-sl": "BM SL",
+  "business-management-hl": "BM HL",
   "economics-sl": "Economics SL",
   "economics-hl": "Economics HL",
   "psychology-sl": "Psychology SL",
@@ -68,4 +68,7 @@ export const subjectMap = {
   "theatre-hl": "Theatre HL",
   "film-sl": "Film SL",
   "film-hl": "Film HL",
+
+  //extra
+  core: "Core",
 };

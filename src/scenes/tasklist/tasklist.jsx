@@ -26,6 +26,7 @@ const initialRows = [
     description: "Write topic 4 notes",
     due: new Date(2023, 9, 30),
     status: "Complete",
+    isNew: false,
   },
   {
     id: 2,
@@ -122,7 +123,7 @@ const Tasklist = () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
-  // Triggered when a task is edited AND saved.
+  // Triggered when a task is edited AND saved or newly createf AND saved.
   const handleSaveClick = (id) => () => {
     // Triggered when a task is edited and saved.
     const editedRow = rows.find((row) => row.id === id); // For database integration: Send the updated task to the server using a PUT request here.
@@ -183,7 +184,7 @@ const Tasklist = () => {
       align: "center",
       headerAlign: "center",
       sortable: false,
-      valueOptions: subjectArray,
+      valueOptions: [...subjectArray, "Core"],
     },
     {
       field: "description",

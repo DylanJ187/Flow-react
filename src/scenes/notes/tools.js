@@ -1,31 +1,38 @@
 import Paragraph from "@editorjs/paragraph";
 import Header from "@editorjs/header";
-import List from "@editorjs/list";
-/*import Link from "@editorjs/link"; */
+import NestedList from "@editorjs/nested-list";
 import Delimiter from "@editorjs/delimiter";
 import CheckList from "@editorjs/checklist";
 import Table from "@editorjs/table";
-/*import ImageTool from "@editorjs/image"; */
+const SimpleImage = require("simple-image-editorjs");
+const Marker = require("@editorjs/marker");
 
 export const EDITOR_JS_TOOLS = {
   paragraph: {
     class: Paragraph,
     inlineToolbar: true,
   },
-  header: Header,
+  header: {
+    class: Header,
+    config: {
+      placeholder: "Double click to add a title...",
+      levels: [1, 2, 3, 4],
+      defaultLevel: 2,
+    },
+  },
   table: Table,
   checkList: CheckList,
-  list: List,
-  /*
-  image: {
-    class: ImageTool,
+  list: {
+    class: NestedList,
+    inlineToolbar: true,
     config: {
-      endpoints: {
-        byFile: "http://localhost:8008/uploadFile", // Your backend file uploader endpoint
-        byUrl: "http://localhost:8008/fetchUrl", // Your endpoint that provides uploading by Url
-      },
+      defaultStyle: "unordered",
     },
-  }, 
-  link: Link,*/
+  },
+  simpleImage: SimpleImage,
   delimiter: Delimiter,
+  Marker: {
+    class: Marker,
+    shortcut: "CMD+M",
+  },
 };

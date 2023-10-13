@@ -83,11 +83,16 @@ export const tokens = (mode) => ({
           900: "rgba(0, 0, 0, 0.95)",
         },
         notesBack: {
-          100: "rgba(0, 0, 0, 0.5)",
+          100: "#141b2d", //#141b2d
         },
         blackWhite: {
           100: "#fff", //opposite
           200: "#000", //same
+        },
+        editorStyles: {
+          100: "#384354", //search
+          200: "#909aab", //icons
+          300: "#233759", // hover
         },
       }
     : {
@@ -169,11 +174,16 @@ export const tokens = (mode) => ({
           900: "rgba(255, 255, 255, 0.55)",
         },
         notesBack: {
-          100: "rgba(255, 255, 255, 0.5)",
+          100: "rgba(255, 255, 255, 1)", //rgba(255, 255, 255, 1)
         },
         blackWhite: {
           100: "#000", //opposite
           200: "#fff", //same
+        },
+        editorStyles: {
+          100: "#fff",
+          200: "#f2f0f0",
+          300: "#c2n3z2",
         },
       }),
 });

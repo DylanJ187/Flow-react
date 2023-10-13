@@ -10,6 +10,7 @@ const Editor = ({ data, onChange }) => {
     if (!ref.current) {
       const editor = new EditorJS({
         holder: "editorjs-container",
+        placeholder: "Start writing...",
         tools: EDITOR_JS_TOOLS,
         data: data,
         async onChange(api) {

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect} from "react";
 import { SubjectContext } from "./../../App";
 import { Box, useTheme, Typography } from "@mui/material";
 import { tokens } from "../../theme";
@@ -15,11 +15,11 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
-
+import axios from 'axios'
 //This is a table that uses CRUD operations (Create, Read, Update, Delete) so read up on how APIs typically call for these operations. I've noted out all the relevant areas I think
-
-const initialRows = [
-  /* This array is rendered as the rows when you open the tasklist tab so whatever you store in the database should be what pushed as initialRows */
+/*
+let initialRows = [
+  // This array is rendered as the rows when you open the tasklist tab so whatever you store in the database should be what pushed as initialRows
   {
     id: 1,
     subject: "Physics HL",
@@ -57,23 +57,30 @@ const initialRows = [
     status: " Not Started",
   },
 ];
+*/
 
+let initialRows = []
 function EditToolbar(props) {
   const { setRows, setRowModesModel, rows } = props;
 
   //Triggered when the "Add Task" button is clicked.
   const handleClick = () => {
-    const newId = Math.max(...rows.map((row) => row.id)) + 1;
+    const newId = Math.max(Math.max(...rows.map((row) => row.id)) + 1,0);
+    const Data = {
+      id: newId, //maximum ID value mapped in rows array +1
+      subject: "",
+      description: "",
+      due: new Date(),
+      status: "Not Started",
+      isNew: true,
+    }
+    axios({
+      method: "POST",
+      url: 'http://localhost:5000/api/createTask',
+      data: Data
+    })
     setRows((oldRows) => [
-      ...oldRows,
-      {
-        id: newId, //maximum ID value mapped in rows array +1
-        subject: "",
-        description: "",
-        due: new Date(),
-        status: "Not Started",
-        isNew: true,
-      },
+      ...oldRows,Data,
     ]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
@@ -93,6 +100,16 @@ function EditToolbar(props) {
 }
 
 const Tasklist = () => {
+  useEffect(() => {
+    console.log('User entered the tasklist page');
+    
+    // This is the cleanup function that will be called when the component is unmounted
+    return () => {
+        initialRows = rows;
+        saveData();
+        console.log('User left the tasklist page');
+    };
+}, []);
   const [rows, setRows] = React.useState(initialRows); // This state holds all the task rows. For database integration, initial data should be fetched from the server.
   const [rowModesModel, setRowModesModel] = React.useState({});
   const theme = useTheme();
@@ -109,6 +126,8 @@ const Tasklist = () => {
       if (editedRow) {
         // Update the row (you could send it to the server here too if necessary)
         processRowUpdate(editedRow);
+        console.log("focus out")
+        console.log(rows)
         // Switch the row back to view mode
         setRowModesModel({
           ...rowModesModel,
@@ -116,34 +135,68 @@ const Tasklist = () => {
         });
       }
       event.defaultMuiPrevented = true;
+      axios({
+        method: "PUT",
+        url: 'http://localhost:5000/api/editTask',
+        data: editedRow
+      });
     }
   };
 
   const handleEditClick = (id) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    console.log(rows)
   };
 
   // Triggered when a task is edited AND saved or newly createf AND saved.
   const handleSaveClick = (id) => () => {
+    console.log("save button is clicked")
     // Triggered when a task is edited and saved.
-    const editedRow = rows.find((row) => row.id === id); // For database integration: Send the updated task to the server using a PUT request here.
-    if (editedRow.isNew) {
-      setRows(
-        rows.map((row) => {
-          if (row.id === id) {
-            return { ...row, isNew: false };
-          }
-          return row;
-        })
-      );
+    let editedRowIndex = rows.findIndex((row) => row.id === id);
+    if (editedRowIndex === -1) {
+      return; // Handle the case where the row with the specified id is not found.
+    }
+  
+    const updatedRows = [...rows]; // Create a copy of the rows array.
+  
+    if (updatedRows[editedRowIndex].isNew) {
+      updatedRows[editedRowIndex] = { ...updatedRows[editedRowIndex], isNew: false };
+      setRows(updatedRows); // Update the isNew property in the component's state.
+      initialRows = updatedRows
     }
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    //setInterval(10000);
+    //saveData(id);
+    console.log(rows)
   };
 
+  const saveData = () => {
+    console.log(rows)
+    console.log(initialRows)
+    for(let i = 0;i < rows.length;i++) {
+      let data = rows[i]
+      console.log(data)
+      axios({
+        method: "PUT",
+        url: 'http://localhost:5000/api/editTask',
+        data: data
+      });
+    }
+    console.log("saved")
+  }
+
+  const log = () => {
+    console.log(rows)
+  }
   // Triggered when a task is deleted.
   const handleDeleteClick = (id) => () => {
     // For database integration: Send a DELETE request to the server to delete the task.
     setRows(rows.filter((row) => row.id !== id));
+    axios({
+      method: "POST",
+      url: 'http://localhost:5000/api/deleteTask',
+      data: id
+    });
   };
 
   // Triggered when a task's edit is canceled.
@@ -334,6 +387,7 @@ const Tasklist = () => {
         onPaginationModelChange={handlePaginationModelChange}
         pageSizeOptions={[8]}
       />
+    <Button onClick={log}>show rows</Button>
     </Box>
   );
 };

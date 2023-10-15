@@ -24,10 +24,9 @@ app.put('/api/editTask',(req,res) => {
     res.status(200).send('done')
 })
 
-app.post('/api/deleteTask', (req,res) => {
-    const data = Object.keys(req.body)
-    const id = data[0]
-    console.log(id)
+app.delete('/api/deleteTask/:id', (req,res) => {
+    const id = req.params.id;
+    console.log("task deleting")
     deleteTask(id);
     res.status(200).send('done')
 })

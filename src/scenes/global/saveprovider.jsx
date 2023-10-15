@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SaveContext from "./savecontext";
 import { useNavigate, useLocation } from "react-router-dom";
-
 const SaveProvider = ({ children }) => {
   const [shouldSave, setShouldSave] = useState(false);
 

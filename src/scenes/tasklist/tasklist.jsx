@@ -74,11 +74,13 @@ function EditToolbar(props) {
       status: "Not Started",
       isNew: true,
     }
+    /*
     axios({
       method: "POST",
       url: 'http://localhost:5000/api/createTask',
       data: Data
     })
+    */
     setRows((oldRows) => [
       ...oldRows,Data,
     ]);
@@ -98,19 +100,28 @@ function EditToolbar(props) {
     </GridToolbarContainer>
   );
 }
-
+let taskIdTodDelete = -1;
 const Tasklist = () => {
+  const [rows, setRows] = React.useState(initialRows); // This state holds all the task rows. For database integration, initial data should be fetched from the server.
   useEffect(() => {
     console.log('User entered the tasklist page');
     
     // This is the cleanup function that will be called when the component is unmounted
-    return () => {
+    return async () => {
         initialRows = rows;
-        saveData();
+        saveData(rows);
+        if(taskIdTodDelete != -1) {
+          axios({
+            method: "DELETE",
+            url: `http://localhost:5000/api/deleteTask/${taskIdTodDelete}`,
+          });
+        }
+        taskIdTodDelete = -1
         console.log('User left the tasklist page');
+        console.log(taskIdTodDelete)
     };
-}, []);
-  const [rows, setRows] = React.useState(initialRows); // This state holds all the task rows. For database integration, initial data should be fetched from the server.
+  }, [rows]);
+  
   const [rowModesModel, setRowModesModel] = React.useState({});
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -135,11 +146,13 @@ const Tasklist = () => {
         });
       }
       event.defaultMuiPrevented = true;
+      /*
       axios({
         method: "PUT",
         url: 'http://localhost:5000/api/editTask',
         data: editedRow
       });
+      */
     }
   };
 
@@ -151,52 +164,59 @@ const Tasklist = () => {
   // Triggered when a task is edited AND saved or newly createf AND saved.
   const handleSaveClick = (id) => () => {
     console.log("save button is clicked")
-    // Triggered when a task is edited and saved.
-    let editedRowIndex = rows.findIndex((row) => row.id === id);
-    if (editedRowIndex === -1) {
-      return; // Handle the case where the row with the specified id is not found.
-    }
-  
-    const updatedRows = [...rows]; // Create a copy of the rows array.
-  
-    if (updatedRows[editedRowIndex].isNew) {
-      updatedRows[editedRowIndex] = { ...updatedRows[editedRowIndex], isNew: false };
-      setRows(updatedRows); // Update the isNew property in the component's state.
-      initialRows = updatedRows
-    }
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-    //setInterval(10000);
-    //saveData(id);
-    console.log(rows)
-  };
 
-  const saveData = () => {
-    console.log(rows)
-    console.log(initialRows)
-    for(let i = 0;i < rows.length;i++) {
-      let data = rows[i]
-      console.log(data)
-      axios({
-        method: "PUT",
-        url: 'http://localhost:5000/api/editTask',
-        data: data
-      });
-    }
-    console.log("saved")
-  }
+    setRows((currentRows) => {
+        let editedRowIndex = currentRows.findIndex((row) => row.id === id);
+        if (editedRowIndex === -1) {
+            return currentRows; 
+        }
+  
+        const updatedRows = [...currentRows]; 
+  
+        if (updatedRows[editedRowIndex].isNew) {
+            updatedRows[editedRowIndex] = { ...updatedRows[editedRowIndex], isNew: false };
+        }
+
+        // After setting rows, then save the data
+        //saveData(updatedRows);  // Assuming saveData uses updatedRows now
+
+        return updatedRows;
+    });
+
+    setRowModesModel((currentMode) => ({ ...currentMode, [id]: { mode: GridRowModes.View } }));
+};
+
+
+const saveData = async (data) => {
+  const promises = data.map(row => {
+    return axios({
+      method: "POST",
+      url: 'http://localhost:5000/api/createTask',
+      data: row
+    });
+  });
+  await Promise.all(promises);
+  console.log("saved");
+}
 
   const log = () => {
     console.log(rows)
+    saveData()
   }
   // Triggered when a task is deleted.
   const handleDeleteClick = (id) => () => {
     // For database integration: Send a DELETE request to the server to delete the task.
     setRows(rows.filter((row) => row.id !== id));
+    /*
     axios({
-      method: "POST",
+      method: "DELETE",
       url: 'http://localhost:5000/api/deleteTask',
       data: id
     });
+    */
+    taskIdTodDelete = id;
+    console.log("row deleted")
+    console.log(id)
   };
 
   // Triggered when a task's edit is canceled.
@@ -393,3 +413,4 @@ const Tasklist = () => {
 };
 
 export default Tasklist;
+export const taskListData = initialRows;

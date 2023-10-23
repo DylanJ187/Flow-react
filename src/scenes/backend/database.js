@@ -1,4 +1,5 @@
-const mysql = require('mysql2')
+const mysql = require('mysql2');
+const { date } = require('yup');
 
 const pool = mysql.createPool({
     host: 'localhost',
@@ -6,6 +7,7 @@ const pool = mysql.createPool({
     password: '20060727a',
     database: 'notes'
 }).promise()
+
 
 async function createTask([id, subject, description, due, status]) {
     const user = "admin";
@@ -19,15 +21,23 @@ async function createTask([id, subject, description, due, status]) {
     }
 }
 
-async function editTask([id, subject, description, due, status]) {
-    const user = "admin";
-    const sql = "UPDATE tasks SET subject=?,description=?,due=?,status=? WHERE taskid= ?";
+async function getTask(user) {
+    const sql = "SELECT * FROM tasks WHERE user = ?";
     
     try {
-        const [result] = await pool.query(sql, [subject, description, due, status, id]);
-        console.log("task created");
+        let [result] = await pool.query(sql,[user]);
+        for(let task of result) {
+            task.id = task.taskid;
+            console.log(task.due)
+            task.due = new Date(task.due);
+            delete task.taskid;
+            delete task.user;
+        }
+        console.log("tasks got");
+        //console.log(result)
+        return result;
     } catch (err) {
-        console.error("Error creating task:", err);
+        console.error("Error fetching task:", err);
     }
 }
 
@@ -45,6 +55,6 @@ async function deleteTask(taskIdtoDelete) {
 
 module.exports = {
     createTask,
-    editTask,
+    getTask,
     deleteTask
 };

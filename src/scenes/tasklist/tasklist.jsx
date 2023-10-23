@@ -16,6 +16,7 @@ import {
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 import axios from 'axios'
+import { constrainPoint } from "@fullcalendar/core/internal";
 //This is a table that uses CRUD operations (Create, Read, Update, Delete) so read up on how APIs typically call for these operations. I've noted out all the relevant areas I think
 /*
 let initialRows = [
@@ -58,7 +59,20 @@ let initialRows = [
   },
 ];
 */
-
+/*
+let user = 'admin'
+let initialRows = []
+axios({
+  method: "GET",
+  url: `http://localhost:5000/api/getTask/${user}`,
+}).then(response => {
+  initialRows = response.data;
+  console.log(initialRows)
+  console.log(typeof initialRows)
+}).catch(error => {
+  console.log("error fetching task",error)
+})
+*/
 let initialRows = []
 function EditToolbar(props) {
   const { setRows, setRowModesModel, rows } = props;
@@ -101,21 +115,44 @@ function EditToolbar(props) {
   );
 }
 let taskIdTodDelete = -1;
+let newEnter = true;
 const Tasklist = () => {
   const [rows, setRows] = React.useState(initialRows); // This state holds all the task rows. For database integration, initial data should be fetched from the server.
   useEffect(() => {
+    if(newEnter == true) {
+      console.log('User entered the tasklist page');
+      //fetching the data from the database
+      let user = 'admin';
+
+      axios({
+        method: "GET",
+        url: `http://localhost:5000/api/getTask/${user}`,
+      })
+      .then(response => {
+        setRows(response.data);  // Setting the data to React's state
+        //rows = response.data
+        console.log(rows)
+      })
+      .catch(error => {
+        console.log("error fetching task", error);
+      });
+      newEnter = false;
+    }
     console.log('User entered the tasklist page');
-    
+
     // This is the cleanup function that will be called when the component is unmounted
     return async () => {
         initialRows = rows;
         saveData(rows);
-        if(taskIdTodDelete != -1) {
+        console.log(rows)
+        
+        if(taskIdTodDelete !== -1) {
           axios({
             method: "DELETE",
             url: `http://localhost:5000/api/deleteTask/${taskIdTodDelete}`,
           });
         }
+        
         taskIdTodDelete = -1
         console.log('User left the tasklist page');
         console.log(taskIdTodDelete)
@@ -188,6 +225,7 @@ const Tasklist = () => {
 
 
 const saveData = async (data) => {
+  console.log(data)
   const promises = data.map(row => {
     return axios({
       method: "POST",
@@ -212,6 +250,12 @@ const saveData = async (data) => {
       method: "DELETE",
       url: 'http://localhost:5000/api/deleteTask',
       data: id
+    });
+    */
+   /*
+    axios({
+      method: "DELETE",
+      url: `http://localhost:5000/api/deleteTask/${id}`,
     });
     */
     taskIdTodDelete = id;
@@ -275,6 +319,7 @@ const saveData = async (data) => {
       type: "date",
       width: 120,
       editable: true,
+      valueGetter: (params) => new Date(params.value)
     },
     {
       field: "status",
